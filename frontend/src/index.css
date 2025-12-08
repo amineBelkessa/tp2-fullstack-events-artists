@@ -1,68 +1,309 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.card-tilt {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+.card-tilt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(255,255,255,0.12),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: inherit;
+  pointer-events: none;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.card-tilt:hover::after {
+  opacity: 1;
+}
+.noise::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='4'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-40px); }
+  100% { transform: translateY(0px); }
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.bg-float {
+  animation: float 18s ease-in-out infinite;
+}
+@keyframes slowFloat {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-60px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes slowFloatReverse {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(60px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-slow-float {
+  animation: slowFloat 25s ease-in-out infinite;
+}
+
+.animate-slow-float-reverse {
+  animation: slowFloatReverse 30s ease-in-out infinite;
+}
+@keyframes aurora {
+  0% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-40px) translateX(30px); }
+  100% { transform: translateY(0) translateX(0); }
+}
+
+@keyframes auroraSlow {
+  0% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(30px) translateX(-40px); }
+  100% { transform: translateY(0) translateX(0); }
+}
+
+.animate-aurora {
+  animation: aurora 22s ease-in-out infinite;
+}
+
+.animate-aurora-slow {
+  animation: auroraSlow 30s ease-in-out infinite;
+}
+
+
+/* ❄️ SNOW EFFECT */
+
+.snow-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(2px 2px at 20% 10%, white 50%, transparent 60%),
+    radial-gradient(2px 2px at 80% 30%, white 50%, transparent 60%),
+    radial-gradient(1.5px 1.5px at 40% 50%, white 50%, transparent 60%),
+    radial-gradient(1.5px 1.5px at 60% 70%, white 50%, transparent 60%),
+    radial-gradient(2px 2px at 10% 80%, white 50%, transparent 60%);
+  background-size: 300px 300px;
+  animation: snow-fall 18s linear infinite;
+  opacity: 0.6;
+}
+
+.snow-layer--slow {
+  animation-duration: 30s;
+  opacity: 0.4;
+  background-size: 400px 400px;
+}
+
+.snow-layer--tiny {
+  animation-duration: 45s;
+  opacity: 0.3;
+  background-size: 500px 500px;
+}
+
+@keyframes snow-fall {
+  0% {
+    background-position: 0 -200px;
   }
-  a:hover {
-    color: #747bff;
+  100% {
+    background-position: 0 1000px;
   }
-  button {
-    background-color: #f9f9f9;
+}
+/* ===== BACKGROUND ANIMATIONS ===== */
+
+@keyframes mesh {
+  0% { background-position: 0% 0%, 100% 0%, 50% 100%; }
+  50% { background-position: 100% 50%, 0% 80%, 50% 0%; }
+  100% { background-position: 0% 0%, 100% 0%, 50% 100%; }
+}
+
+.animate-mesh {
+  animation: mesh 28s ease-in-out infinite;
+}
+
+@keyframes fog {
+  0% { transform: translateY(0); opacity: 0.25; }
+  50% { transform: translateY(-40px); opacity: 0.35; }
+  100% { transform: translateY(0); opacity: 0.25; }
+}
+
+.animate-fog {
+  animation: fog 22s ease-in-out infinite;
+}
+/* ====== GLASS + LIGHT REFLECTION SUR LES CARDS ====== */
+
+.card-glass {
+  position: relative;
+  border-radius: 1.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.06), transparent 55%),
+    rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+}
+
+/* reflet animé qui passe sur la carte au hover */
+
+.card-reflection {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 45%,
+    transparent 80%
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-130%);
+  animation: reflection-sweep 2.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  animation-play-state: paused; /* ne tourne que au hover */
+}
+
+.group:hover .card-reflection {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+@keyframes reflection-sweep {
+  0% {
+    transform: translateX(-130%);
   }
+  100% {
+    transform: translateX(130%);
+  }
+}
+
+/* légère mise en avant au hover pour tout ce qui a cette classe */
+
+.hover-lift {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* wrapper pour reveal au scroll */
+
+.reveal-wrapper {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.65s ease-out,
+    transform 0.65s ease-out;
+}
+
+.reveal-wrapper.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========================= */
+/* ✨ BACKGROUND ANIMATIONS */
+/* ========================= */
+
+@keyframes meshMove {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-60px, 40px) scale(1.05);
+  }
+  66% {
+    transform: translate(40px, -30px) scale(0.95);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.animate-mesh {
+  animation: meshMove 26s ease-in-out infinite alternate;
+}
+
+/* ========================= */
+
+@keyframes fogMove {
+  0% {
+    transform: translateX(0) translateY(0);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translateX(-30px) translateY(20px);
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+    opacity: 0.25;
+  }
+}
+
+.animate-fog {
+  animation: fogMove 18s ease-in-out infinite;
+}
+
+/* ========================= */
+/* PERF : désactiver si mobile */
+/* ========================= */
+
+@media (max-width: 768px) {
+  .animate-mesh,
+  .animate-fog {
+    animation: none;
+  }
+}
+
+/* ===================== */
+/* 🧊 GLASS & REFLECTION */
+/* ===================== */
+
+.hover-lift {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+
+.card-glass {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-reflection::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(
+    120deg,
+    transparent 35%,
+    rgba(255,255,255,0.18),
+    transparent 65%
+  );
+  transform: translateX(-100%);
+  transition: transform 1.2s ease;
+}
+
+.group:hover .card-reflection::before {
+  transform: translateX(100%);
 }

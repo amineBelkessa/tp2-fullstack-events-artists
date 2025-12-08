@@ -1,29 +1,32 @@
-import { Routes, Route } from "react-router-dom";
-import { ROUTES } from "./routes";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 
-// Pages
 import HomePage from "../pages/HomePage";
+import EventsListPage from "../features/events/EventsListPage";
+import EventDetailPage from "../features/events/EventDetailPage";
 import NotFoundPage from "../pages/NotFoundPage";
-
-// Features
-import { EventsListPage, EventDetailPage } from "../features/events";
-import { ArtistsListPage } from "../features/artist";
+// import ArtistsPage si tu en as un
 
 export default function AppRouter() {
+  const location = useLocation();
+
   return (
-    <Routes>
-      {/* HOME */}
-      <Route path={ROUTES.HOME} element={<HomePage />} />
-
-      {/* EVENTS */}
-      <Route path={ROUTES.EVENTS} element={<EventsListPage />} />
-      <Route path={ROUTES.EVENT_DETAIL} element={<EventDetailPage />} />
-
-      {/* ARTISTS */}
-      <Route path={ROUTES.ARTISTS} element={<ArtistsListPage />} />
-
-      {/* 404 */}
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+    <AnimatePresence mode="wait">
+      <motion.main
+        key={location.pathname}
+        initial={{ opacity: 0, y: 20, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } }}
+        exit={{ opacity: 0, y: -18, scale: 1.02, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } }}
+        className="pt-4 pb-16"
+      >
+        <Routes location={location}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/events" element={<EventsListPage />} />
+          <Route path="/events/:id" element={<EventDetailPage />} />
+          {/* <Route path="/artists" element={<ArtistsPage />} /> */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </motion.main>
+    </AnimatePresence>
   );
 }
