@@ -1,12 +1,13 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
-import { fetchEventById } from "./api";
+import { fetchEventById, deleteEvent } from "./api";
 import PageContainer from "../../components/layout/PageContainer";
 import Spinner from "../../components/ui/Spinner";
 
 export default function EventDetailPage() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   const {
     data: event,
@@ -17,6 +18,18 @@ export default function EventDetailPage() {
     queryFn: () => fetchEventById(id!),
     enabled: !!id,
   });
+
+  async function handleDelete() {
+    if (!id) return;
+
+    const confirmed = window.confirm(
+      "Supprimer définitivement cet événement ?"
+    );
+    if (!confirmed) return;
+
+    await deleteEvent(id);
+    navigate("/events");
+  }
 
   if (isLoading) {
     return (
@@ -104,6 +117,38 @@ export default function EventDetailPage() {
             >
               ← Retour à la programmation
             </Link>
+
+            <div className="flex items-center gap-4">
+              <Link
+                to={`/events/${event.id}/edit`}
+                className="
+                  rounded-full
+                  border border-white/20
+                  px-5 py-2
+                  text-sm text-neutral-300
+                  transition
+                  hover:border-white/40
+                  hover:text-white
+                "
+              >
+                Modifier
+              </Link>
+
+              <button
+                onClick={handleDelete}
+                className="
+                  rounded-full
+                  border border-red-500/40
+                  px-5 py-2
+                  text-sm text-red-300
+                  transition
+                  hover:border-red-500
+                  hover:text-red-200
+                "
+              >
+                Supprimer
+              </button>
+            </div>
           </div>
 
         </section>

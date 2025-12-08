@@ -1,7 +1,13 @@
-export type Event = {
+export type Artist = {
   id: number;
   label: string;
+};
+
+export type Event = {
+  id: string; // 
+  label: string;
   startDate: string;
+  place: string;
   endDate: string;
   artists: {
     id: string;
@@ -9,11 +15,9 @@ export type Event = {
   }[];
 };
 
-// Pagination Spring Boot
+// Pagination Spring Boot (version minimale et correcte)
 export type SpringPage<T> = {
   content: T[];
   totalPages: number;
-  number: number; // page actuelle
-  size: number;
   totalElements: number;
 };
