@@ -2,12 +2,19 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
 import HomePage from "../pages/HomePage";
+import NotFoundPage from "../pages/NotFoundPage";
+
+/* ===== EVENTS ===== */
 import EventsListPage from "../features/events/EventsListPage";
 import EventDetailPage from "../features/events/EventDetailPage";
 import EventCreatePage from "../features/events/EventCreatePage";
 import EventEditPage from "../features/events/EventEditPage";
-import NotFoundPage from "../pages/NotFoundPage";
-// import ArtistsPage si tu en as un
+
+/* ===== ARTISTS ===== */
+import ArtistListPage from "../features/artist/ArtistsListPage";
+import ArtistDetailPage from "../features/artist/ArtistDetailPage";
+import ArtistCreatePage from "../features/artist/ArtistCreatePage";
+import ArtistEditPage from "../features/artist/ArtistEditPage";
 
 export default function AppRouter() {
   const location = useLocation();
@@ -42,8 +49,11 @@ export default function AppRouter() {
           <Route path="/events/:id/edit" element={<EventEditPage />} />
           <Route path="/events/:id" element={<EventDetailPage />} />
 
-          {/* ===== ARTISTS ===== */}
-          {/* <Route path="/artists" element={<ArtistsPage />} /> */}
+          {/* ===== ARTISTS ✅ ===== */}
+          <Route path="/artists" element={<ArtistListPage />} />
+          <Route path="/artists/create" element={<ArtistCreatePage />} />
+          <Route path="/artists/:id/edit" element={<ArtistEditPage />} />
+          <Route path="/artists/:id" element={<ArtistDetailPage />} />
 
           {/* ===== FALLBACK ===== */}
           <Route path="*" element={<NotFoundPage />} />
