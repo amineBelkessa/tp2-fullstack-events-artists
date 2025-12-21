@@ -1,9 +1,11 @@
+// frontend/src/features/events/api.ts
+
 import { apiClient } from "../../lib/api/apiClient";
-import type { Event, SpringPage } from "./types";
+import type { Event, SpringPage, EventUpdatePayload } from "./types";
 
 /* =========================
    LISTE DES ÉVÉNEMENTS
-   ========================= */
+========================= */
 export async function fetchEvents(
   page: number,
   size: number
@@ -15,8 +17,8 @@ export async function fetchEvents(
 }
 
 /* =========================
-   DÉTAIL D’UN ÉVÉNEMENT ✅
-   ========================= */
+   DÉTAIL D’UN ÉVÉNEMENT
+========================= */
 export async function fetchEventById(id: string): Promise<Event> {
   const response = await apiClient.get(`/events/${id}`);
   return response.data;
@@ -24,26 +26,33 @@ export async function fetchEventById(id: string): Promise<Event> {
 
 /* =========================
    CRÉATION
-   ========================= */
-export async function createEvent(payload: {
+========================= */
+export type CreateEventPayload = {
   label: string;
   startDate: string;
   endDate: string;
-}): Promise<Event> {
+};
+export type UpdateEventPayload = {
+  label: string;
+  startDate: string;
+  endDate: string;
+  artistIds?: string[]; // ✅ STRING[]
+};
+
+
+export async function createEvent(
+  payload: CreateEventPayload
+): Promise<Event> {
   const response = await apiClient.post("/events", payload);
   return response.data;
 }
 
 /* =========================
-   MODIFICATION
-   ========================= */
+   MODIFICATION ✅ (avec artistes)
+========================= */
 export async function updateEvent(
   id: string,
-  payload: {
-    label: string;
-    startDate: string;
-    endDate: string;
-  }
+  payload: EventUpdatePayload // ✅ importé depuis types
 ): Promise<Event> {
   const response = await apiClient.put(`/events/${id}`, payload);
   return response.data;
@@ -51,7 +60,7 @@ export async function updateEvent(
 
 /* =========================
    SUPPRESSION
-   ========================= */
+========================= */
 export async function deleteEvent(id: string): Promise<void> {
   await apiClient.delete(`/events/${id}`);
 }

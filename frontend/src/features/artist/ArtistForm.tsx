@@ -19,18 +19,21 @@ export default function ArtistForm({
   onSubmit,
 }: ArtistFormProps) {
   const [label, setLabel] = useState(initialValues?.label ?? "");
-  const [error, setError] = useState<string | null>(null);
+  const [touched, setTouched] = useState(false);
+
+  const trimmedLabel = label.trim();
+  const isInvalid =
+    touched && (trimmedLabel.length === 0 || trimmedLabel.length < 3);
+
+  const canSubmit = !loading && trimmedLabel.length >= 3;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setTouched(true);
 
-    if (!label.trim()) {
-      setError("Le nom de l’artiste est obligatoire.");
-      return;
-    }
+    if (!canSubmit) return;
 
-    setError(null);
-    await onSubmit({ label });
+    await onSubmit({ label: trimmedLabel });
   }
 
   return (
@@ -46,24 +49,9 @@ export default function ArtistForm({
         backdrop-blur-xl
       "
     >
-      {/* ===== ERROR ===== */}
-      {error && (
-        <div
-          className="
-            rounded-[20px]
-            border border-red-400/30
-            bg-red-400/10
-            px-6 py-4
-            text-sm text-red-100
-          "
-        >
-          {error}
-        </div>
-      )}
-
       {/* ===== LABEL ===== */}
-      <div>
-        <label className="mb-3 block text-xs uppercase tracking-[0.3em] text-white/60">
+      <div className="space-y-2">
+        <label className="block text-xs uppercase tracking-[0.3em] text-white/60">
           Nom de l’artiste
         </label>
 
@@ -71,25 +59,42 @@ export default function ArtistForm({
           type="text"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
+          onBlur={() => setTouched(true)}
           placeholder="Ex : Nils Frahm"
-          className="
+          className={`
             w-full
             rounded-[18px]
-            border border-white/15
+            border
             bg-black/30
             px-5 py-4
             text-sm text-white
             outline-none
             transition
             placeholder:text-white/40
-            focus:border-white/40
-          "
+            ${
+              isInvalid
+                ? "border-red-400/60 focus:border-red-400"
+                : "border-white/15 focus:border-white/40"
+            }
+          `}
         />
+
+        <div className="min-h-[1.25rem] text-xs">
+          {isInvalid ? (
+            <p className="text-red-300">
+              Le nom doit contenir au moins 3 caractères.
+            </p>
+          ) : (
+            <p className="text-white/40">
+              Utilise le nom de scène officiel.
+            </p>
+          )}
+        </div>
       </div>
 
       {/* ===== ACTION ===== */}
       <div className="flex justify-end">
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={!canSubmit}>
           {loading ? "Enregistrement…" : submitLabel}
         </Button>
       </div>

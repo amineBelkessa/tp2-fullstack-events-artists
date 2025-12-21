@@ -5,7 +5,6 @@ import PageContainer from "../../components/layout/PageContainer";
 import Spinner from "../../components/ui/Spinner";
 
 import { fetchArtistById, deleteArtist } from "./api";
-
 import type { Artist } from "./types";
 
 export default function ArtistDetailPage() {
@@ -52,6 +51,8 @@ export default function ArtistDetailPage() {
     );
   }
 
+  const events = artist.events ?? [];
+
   return (
     <div className="min-h-screen text-neutral-100">
       <PageContainer>
@@ -88,19 +89,62 @@ export default function ArtistDetailPage() {
         {/* ===== CONTENT ===== */}
         <section className="max-w-4xl space-y-20">
 
-          {/* INFOS */}
+          {/* ===== EVENTS LINKED ===== */}
           <div>
-            <h2 className="mb-6 text-sm uppercase tracking-[0.3em] text-neutral-400">
-              Informations
+            <h2 className="mb-8 text-sm uppercase tracking-[0.3em] text-neutral-400">
+              Événements associés
             </h2>
 
-            <p className="text-sm text-neutral-300">
-              Aucun détail supplémentaire n’est encore renseigné pour cet
-              artiste.
-            </p>
+            {events.length === 0 ? (
+              <div
+                className="
+                  rounded-[28px]
+                  border border-white/15
+                  bg-white/5
+                  px-12 py-10
+                  text-sm text-white/70
+                  backdrop-blur
+                "
+              >
+                Aucun événement n’est associé à cet artiste.
+              </div>
+            ) : (
+              <div className="grid gap-6">
+                {events.map((event) => (
+                  <Link
+                    key={event.id}
+                    to={`/events/${event.id}`}
+                    className="
+                      rounded-[24px]
+                      border border-white/15
+                      bg-white/5
+                      px-8 py-6
+                      backdrop-blur
+                      transition
+                      hover:border-white/40
+                    "
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-base text-white">
+                          {event.label}
+                        </h3>
+                        <p className="mt-2 text-xs text-white/60">
+                          {event.startDate} — {event.endDate}
+                        </p>
+                      </div>
+
+                      <span className="text-xs text-white/40">
+                        Voir →
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* ACTIONS */}
+          {/* ===== ACTIONS ===== */}
           <div
             className="
               flex items-center justify-between

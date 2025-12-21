@@ -6,45 +6,98 @@ import EventForm from "./EventForm";
 import { fetchEventById, updateEvent, deleteEvent } from "./api";
 import type { Event } from "./types";
 
+import { fetchArtists } from "../artist/api";
+import type { Artist } from "./types";
+import type { SpringPage } from "../events/types";
+
 export default function EventEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
+  /* ======================
+     SÉCURITÉ ID
+  ====================== */
+  if (!id) {
+    return (
+      <PageContainer>
+        <p className="text-red-400">ID événement manquant.</p>
+      </PageContainer>
+    );
+  }
+
+  const eventId = id;
+
   const [event, setEvent] = useState<Event | null>(null);
+  const [artists, setArtists] = useState<Artist[]>([]);
+  const [selectedArtistIds, setSelectedArtistIds] = useState<number[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /* ======================
+     LOAD EVENT + ARTISTS
+  ====================== */
   useEffect(() => {
-    if (!id) return;
+    async function load() {
+      try {
+        setLoading(true);
+        setError(null);
 
-    fetchEventById(id)
-      .then(setEvent)
-      .catch(() => setError("Impossible de charger l’événement."))
-      .finally(() => setLoading(false));
-  }, [id]);
+        const [eventData, artistsPage] = await Promise.all([
+          fetchEventById(eventId),
+          fetchArtists(0, 100) as Promise<SpringPage<Artist>>,
+        ]);
+
+        setEvent(eventData);
+        setArtists(artistsPage.content);
+
+        // ✅ ids artistes déjà associés → number[]
+        setSelectedArtistIds(eventData.artists.map(a => a.id));
+      } catch {
+        setError("Impossible de charger l’événement.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, [eventId]);
+
+  /* ======================
+     ARTISTS HANDLERS
+  ====================== */
+  function addArtist(artistId: number) {
+    setSelectedArtistIds(prev =>
+      prev.includes(artistId) ? prev : [...prev, artistId]
+    );
+  }
+
+  function removeArtist(artistId: number) {
+    setSelectedArtistIds(prev =>
+      prev.filter(id => id !== artistId)
+    );
+  }
 
   /* ======================
      UPDATE
-     ====================== */
+  ====================== */
   async function handleUpdate(values: {
     label: string;
     startDate: string;
     endDate: string;
   }) {
-    if (!id) return;
-
     try {
       setSaving(true);
       setError(null);
 
-      await updateEvent(id, values);
+      await updateEvent(eventId, {
+        ...values,
+        artistIds: selectedArtistIds, // ✅ number[]
+      });
 
-      // ✅ Redirection + message succès
       navigate("/events", {
-        state: {
-          successMessage: "Modification effectuée avec succès ✅",
-        },
+        state: { successMessage: "Modification effectuée avec succès ✅" },
       });
     } catch {
       setError("Échec de la mise à jour de l’événement.");
@@ -55,28 +108,23 @@ export default function EventEditPage() {
 
   /* ======================
      DELETE
-     ====================== */
+  ====================== */
   async function handleDelete() {
-    if (!id) return;
-
-    const confirmed = window.confirm(
-      "Supprimer définitivement cet événement ?"
-    );
-    if (!confirmed) return;
+    if (!window.confirm("Supprimer définitivement cet événement ?")) return;
 
     try {
-      await deleteEvent(id);
-
+      await deleteEvent(eventId);
       navigate("/events", {
-        state: {
-          successMessage: "Événement supprimé avec succès ✅",
-        },
+        state: { successMessage: "Événement supprimé avec succès ✅" },
       });
     } catch {
       setError("Échec de la suppression de l’événement.");
     }
   }
 
+  /* ======================
+     UI STATES
+  ====================== */
   if (loading) {
     return (
       <PageContainer>
@@ -95,56 +143,19 @@ export default function EventEditPage() {
 
   return (
     <PageContainer>
-
       {/* ===== HEADER ===== */}
-      <div className="mb-20 flex max-w-4xl items-start justify-between gap-10">
-        <div>
-          <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/60">
-            Administration
-          </p>
+      <div className="mb-20 flex max-w-4xl justify-between">
+        <h1 className="text-4xl text-white">Modifier l’événement</h1>
 
-          <h1 className="text-4xl font-medium tracking-tight text-white">
-            Modifier l’événement
-          </h1>
-
-          <p className="mt-6 text-base text-white/70">
-            Mettre à jour les informations principales ou supprimer l’événement.
-          </p>
-        </div>
-
-        {/* DELETE */}
         <button
           onClick={handleDelete}
-          className="
-            rounded-full
-            border border-red-500/40
-            px-6 py-3
-            text-sm text-red-300
-            transition
-            hover:border-red-500
-            hover:text-red-200
-          "
+          className="rounded-full border border-red-400 px-6 py-2 text-red-300"
         >
           Supprimer
         </button>
       </div>
 
-      {/* ===== ERROR ===== */}
-      {error && (
-        <div
-          className="
-            mb-12
-            rounded-[24px]
-            border border-red-400/30
-            bg-red-400/10
-            px-8 py-6
-            text-sm text-red-100
-            backdrop-blur
-          "
-        >
-          {error}
-        </div>
-      )}
+      {error && <p className="mb-6 text-red-400">{error}</p>}
 
       {/* ===== FORM ===== */}
       <EventForm
@@ -153,10 +164,63 @@ export default function EventEditPage() {
           startDate: event.startDate,
           endDate: event.endDate,
         }}
-        submitLabel="Enregistrer les modifications"
+        submitLabel="Enregistrer"
         loading={saving}
         onSubmit={handleUpdate}
       />
+
+      {/* ===== ARTISTS ===== */}
+      <section className="mt-14 max-w-2xl space-y-6">
+        <h2 className="text-sm uppercase text-white/60">
+          Artistes associés
+        </h2>
+
+        <select
+          defaultValue=""
+          onChange={e => {
+            const artistId = Number(e.target.value);
+            if (!Number.isNaN(artistId)) addArtist(artistId);
+            e.target.value = "";
+          }}
+          className="rounded-full border border-white/20 bg-black/30 px-5 py-2 text-white"
+        >
+          <option value="">Ajouter un artiste…</option>
+          {artists
+            .filter(a => !selectedArtistIds.includes(a.id))
+            .map(a => (
+              <option key={a.id} value={a.id}>
+                {a.label}
+              </option>
+            ))}
+        </select>
+
+        {selectedArtistIds.length === 0 ? (
+          <p className="text-white/60">Aucun artiste associé.</p>
+        ) : (
+          <ul className="flex flex-wrap gap-3">
+            {selectedArtistIds.map(artistId => {
+              const artist = artists.find(a => a.id === artistId);
+              if (!artist) return null;
+
+              return (
+                <li
+                  key={artistId}
+                  className="flex items-center gap-3 rounded-full border border-white/25 bg-black/30 px-4 py-2 text-xs text-white"
+                >
+                  {artist.label}
+                  <button
+                    type="button"
+                    onClick={() => removeArtist(artistId)}
+                    className="hover:text-red-300"
+                  >
+                    Retirer
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
     </PageContainer>
   );
 }

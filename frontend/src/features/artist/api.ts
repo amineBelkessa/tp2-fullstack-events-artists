@@ -1,5 +1,6 @@
 import { apiClient } from "../../lib/api/apiClient";
-import type { Artist, SpringPage } from "./types";
+import type { Artist, SpringPage, ArtistUpdatePayload } from "./types";
+
 
 /* =========================
    LISTE DES ARTISTES
@@ -38,16 +39,12 @@ export async function createArtist(payload: {
 /* =========================
    MODIFICATION
    ========================= */
-export async function updateArtist(
+
+export function updateArtist(
   id: string,
-  payload: {
-    label: string;
-    description?: string;
-    country?: string;
-  }
+  payload: ArtistUpdatePayload
 ): Promise<Artist> {
-  const response = await apiClient.put(`/artists/${id}`, payload);
-  return response.data;
+  return apiClient.put(`/artists/${id}`, payload).then(res => res.data);
 }
 
 /* =========================

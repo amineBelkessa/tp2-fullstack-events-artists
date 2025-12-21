@@ -1,21 +1,30 @@
+// frontend/src/features/events/types.ts
+
+/* ========= ARTIST ========= */
 export type Artist = {
-  id: number;
+  id: number;        // ✅ CORRIGÉ : number (cohérent partout)
   label: string;
 };
 
+/* ========= EVENT ========= */
 export type Event = {
-  id: string; // 
+  id: string;        // ✅ Event reste string (UUID / String backend)
   label: string;
   startDate: string;
-  place: string;
   endDate: string;
-  artists: {
-    id: string;
-    label: string;
-  }[];
+  place: string;
+  artists: Artist[]; // ✅ artistes avec id:number
 };
 
-// Pagination Spring Boot (version minimale et correcte)
+/* ========= UPDATE PAYLOAD ========= */
+export type EventUpdatePayload = {
+  label: string;
+  startDate: string;
+  endDate: string;
+  artistIds?: number[];
+};
+
+/* ========= PAGINATION ========= */
 export type SpringPage<T> = {
   content: T[];
   totalPages: number;

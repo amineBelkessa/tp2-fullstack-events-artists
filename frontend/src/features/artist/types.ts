@@ -1,17 +1,29 @@
-
+import type { Event } from "../events/types";
 
 export type Artist = {
-  id: string;
-  label: string;      // Nom de l’artiste
-  description?: string;
-  country?: string;
+  id: string;          // ✅ STRING
+  label: string;
+  events?: Event[];
 };
 
-// Pagination Spring Boot
+export type ArtistUpdatePayload = {
+  label: string;
+  eventIds?: string[]; // ✅ STRING[]
+};
+
 export type SpringPage<T> = {
   content: T[];
   totalPages: number;
-  number: number;       // page actuelle
+  number: number;
   size: number;
   totalElements: number;
 };
+
+// (optionnel, si utilisé ailleurs)
+export type ArtistEvent = {
+  id: string;          // ✅ cohérent avec Event.id
+  label: string;
+  startDate: string;
+  endDate: string;
+};
+
