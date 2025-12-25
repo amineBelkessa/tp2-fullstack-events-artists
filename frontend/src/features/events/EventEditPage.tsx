@@ -134,7 +134,7 @@ export default function EventEditPage() {
       await updateEvent(eventId, values);
 
       navigate("/events", {
-        state: { successMessage: "Modification effectuée avec succès ✅" },
+        state: { successMessage: "Modification effectuée avec succès" },
       });
     } catch (err) {
       console.error("Erreur update:", err);
