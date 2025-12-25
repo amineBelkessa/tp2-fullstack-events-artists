@@ -301,12 +301,7 @@ export default function EventCreatePage() {
               </div>
             )}
 
-            {/* INFO MESSAGE */}
-            {selectedArtistIds.length > 0 && (
-              <p className="text-xs text-white/40">
-                💡 Ces artistes seront automatiquement associés à l'événement lors de sa création.
-              </p>
-            )}
+          
           </>
         )}
       </section>
