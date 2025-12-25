@@ -18,3 +18,21 @@ git --version
 docker --version
 docker compose version
 ```
+## 📥 Clone the repository
+
+```bash
+git clone git@github.com:amineBelkessa/tp2-fullstack-events-artists.git
+cd tp2-fullstack-events-artists
+```
+
+## ▶️ Start the application
+```bash
+docker compose up -d --build
+
+```
+
+## ⏹ Stop the application
+```bash
+docker compose down -v
+
+```
