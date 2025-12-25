@@ -74,7 +74,7 @@ export default function Footer() {
         {/* Bas de footer */}
         <div className="mt-20 flex flex-col gap-6 text-xs text-white/40 md:flex-row md:items-center md:justify-between">
           <span>© {new Date().getFullYear()} Events & Artists</span>
-          <span>Conçu comme une scène éditoriale</span>
+          <span>Conçu par MOUSSAOUI Tarek & BELKESSA Amine</span>
         </div>
 
       </div>
