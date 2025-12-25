@@ -17,7 +17,7 @@ export async function fetchEvents(
 }
 
 /* =========================
-   DÉTAIL D’UN ÉVÉNEMENT
+   DÉTAIL D'UN ÉVÉNEMENT
 ========================= */
 export async function fetchEventById(id: string): Promise<Event> {
   const response = await apiClient.get(`/events/${id}`);
@@ -32,13 +32,6 @@ export type CreateEventPayload = {
   startDate: string;
   endDate: string;
 };
-export type UpdateEventPayload = {
-  label: string;
-  startDate: string;
-  endDate: string;
-  artistIds?: string[]; // ✅ STRING[]
-};
-
 
 export async function createEvent(
   payload: CreateEventPayload
@@ -48,11 +41,11 @@ export async function createEvent(
 }
 
 /* =========================
-   MODIFICATION ✅ (avec artistes)
+   MODIFICATION (sans artistes)
 ========================= */
 export async function updateEvent(
   id: string,
-  payload: EventUpdatePayload // ✅ importé depuis types
+  payload: EventUpdatePayload
 ): Promise<Event> {
   const response = await apiClient.put(`/events/${id}`, payload);
   return response.data;
@@ -63,4 +56,24 @@ export async function updateEvent(
 ========================= */
 export async function deleteEvent(id: string): Promise<void> {
   await apiClient.delete(`/events/${id}`);
+}
+
+/* =========================
+   GESTION DES ARTISTES
+   ✅ CORRIGÉ : artistId doit être un UUID string
+========================= */
+export async function linkArtistToEvent(
+  eventId: string,
+  artistId: string
+): Promise<void> {
+  // ✅ L'API attend : POST /events/{eventId}/artists/{artistId}
+  await apiClient.post(`/events/${eventId}/artists/${artistId}`, {});
+}
+
+export async function unlinkArtistFromEvent(
+  eventId: string,
+  artistId: string
+): Promise<void> {
+  // ✅ L'API attend : DELETE /events/{eventId}/artists/{artistId}
+  await apiClient.delete(`/events/${eventId}/artists/${artistId}`);
 }
