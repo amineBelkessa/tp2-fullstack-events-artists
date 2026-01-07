@@ -106,7 +106,7 @@ export default function EventsListPage() {
             </h1>
 
             <p className="mt-8 max-w-xl text-white/80">
-              Une sélection d’événements culturels et musicaux conçue comme une
+              Une sélection d'événements culturels et musicaux conçue comme une
               scène éditoriale. Fluide, immersive, sans distraction.
             </p>
           </div>
@@ -179,11 +179,11 @@ export default function EventsListPage() {
       {/* ===== LIST ===== */}
       {hasEvents && (
         <div
-          className="grid gap-12 sm:grid-cols-2 xl:grid-cols-3"
+          className="grid gap-12 sm:grid-cols-2 xl:grid-cols-3 auto-rows-fr"
           style={{ perspective: "1600px" }}
         >
           {events.map((event, index) => (
-            <RevealOnScroll key={event.id} delayMs={index * 120}>
+            <RevealOnScroll key={event.id} delayMs={index * 120} className="h-full">
               <EventCard event={event} />
             </RevealOnScroll>
           ))}
@@ -220,3 +220,4 @@ export default function EventsListPage() {
     </PageContainer>
   );
 }
+

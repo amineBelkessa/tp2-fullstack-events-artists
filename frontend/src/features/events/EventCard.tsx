@@ -11,6 +11,7 @@ export default function EventCard({ event }: Props) {
       to={`/events/${event.id}`}
       className="
         group relative block
+        w-full h-full
         will-change-transform
         hover-lift
       "
@@ -40,7 +41,8 @@ export default function EventCard({ event }: Props) {
         className="
           card-glass
           relative isolate
-          h-full
+          w-full h-full
+          flex flex-col
           rounded-[36px]
           border border-white/10
           bg-neutral-900/65
@@ -49,6 +51,7 @@ export default function EventCard({ event }: Props) {
           transition-all duration-700
           group-hover:border-white/20
           group-hover:shadow-[0_80px_160px_rgba(0,0,0,0.75)]
+          overflow-hidden
         "
       >
         {/* HALO EXTERNE */}
@@ -76,10 +79,10 @@ export default function EventCard({ event }: Props) {
         />
 
         {/* CONTENT */}
-        <div className="relative flex h-full flex-col justify-between gap-10">
+        <div className="relative flex flex-1 flex-col justify-between gap-6 min-h-0">
 
           {/* META */}
-          <div className="space-y-5">
+          <div className="space-y-5 flex-shrink-0">
             <span className="block text-[11px] tracking-[0.45em] uppercase text-neutral-400">
               {(event as any).place ?? "—"}
             </span>
@@ -95,7 +98,7 @@ export default function EventCard({ event }: Props) {
 
           {/* ARTISTS */}
           {event.artists.length > 0 && (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 flex-shrink-0">
               {event.artists.slice(0, 3).map((artist) => (
                 <span
                   key={artist.id}
@@ -116,7 +119,7 @@ export default function EventCard({ event }: Props) {
           )}
 
           {/* CTA */}
-          <div className="pt-6">
+          <div className="pt-6 flex-shrink-0 mt-auto">
             <span className="
               inline-flex items-center gap-4
               text-sm text-neutral-400
